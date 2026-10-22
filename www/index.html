@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>App</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    body { background: #f0f2f5; color: #333; }
+
+    .tela { display: none; min-height: 100vh; padding: 20px; }
+    .tela.ativa { display: flex; align-items: center; justify-content: center; }
+
+    .box { width: 100%; max-width: 320px; background: #fff; padding: 22px; border-radius: 6px; border: 1px solid #ddd; }
+    .box h1 { font-size: 18px; text-align: center; margin-bottom: 16px; }
+    .box input { width: 100%; padding: 9px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+    .box input:focus { border-color: #1976d2; outline: none; }
+    .box button { width: 100%; padding: 10px; background: #1976d2; color: #fff; border: 0; border-radius: 4px; font-size: 14px; cursor: pointer; }
+    .box button:hover { background: #1565c0; }
+    .box .link { margin-top: 12px; text-align: center; font-size: 13px; color: #666; }
+    .box .link a { color: #1976d2; text-decoration: none; }
+
+    #home { flex-direction: column; align-items: stretch; padding: 0; }
+    #home .topo { height: 50px; background: #1976d2; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; font-weight: bold; }
+    #home .topo button { background: transparent; border: 1px solid #fff; color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+    #home .conteudo { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+    #home .conteudo h2 { font-size: 17px; margin-bottom: 6px; }
+    #home .conteudo p { font-size: 13px; color: #777; }
+  </style>
+</head>
+<body>
+
+  <div id="login" class="tela ativa">
+    <div class="box">
+      <h1>Login</h1>
+      <input id="l_user" placeholder="Usuário">
+      <input id="l_pass" type="password" placeholder="Senha">
+      <button id="b_login">Entrar</button>
+      <p class="link">Não tem conta? <a href="#" id="ir_cad">Cadastre-se</a></p>
+    </div>
+  </div>
+
+  <div id="cadastro" class="tela">
+    <div class="box">
+      <h1>Cadastro</h1>
+      <input id="c_user" placeholder="Usuário">
+      <input id="c_pass" type="password" placeholder="Senha">
+      <input id="c_pass2" type="password" placeholder="Confirme a senha">
+      <button id="b_cad">Cadastrar</button>
+      <p class="link">Já tem conta? <a href="#" id="ir_login">Faça login</a></p>
+    </div>
+  </div>
+
+  <div id="home" class="tela">
+    <div class="topo">
+      <span>Home</span>
+      <button id="b_sair">Sair</button>
+    </div>
+    <div class="conteudo">
+      <h2>Bem-vindo, <span id="nome">usuário</span></h2>
+      <p>Você está logado.</p>
+    </div>
+  </div>
+
+  <script>
+    var users = [{ u: 'admin', p: '123456' }];
+    var $ = function (id) { return document.getElementById(id); };
+
+    function mostrar(id) {
+      var telas = document.querySelectorAll('.tela');
+      for (var i = 0; i < telas.length; i++) telas[i].classList.remove('ativa');
+      $(id).classList.add('ativa');
+    }
+
+    $('b_login').onclick = function () {
+      var u = $('l_user').value.trim(), p = $('l_pass').value.trim();
+      if (!u || !p) return alert('Preencha usuário e senha.');
+      for (var i = 0; i < users.length; i++) {
+        if (users[i].u === u && users[i].p === p) {
+          $('nome').innerText = u;
+          $('l_user').value = ''; $('l_pass').value = '';
+          return mostrar('home');
+        }
+      }
+      alert('Usuário ou senha incorretos.');
+    };
+
+    $('b_cad').onclick = function () {
+      var u = $('c_user').value.trim(), p = $('c_pass').value.trim(), p2 = $('c_pass2').value.trim();
+      if (!u || !p || !p2) return alert('Preencha tudo.');
+      if (p !== p2) return alert('Senhas diferentes.');
+      if (p.length < 6) return alert('Senha mínima: 6 caracteres.');
+      for (var i = 0; i < users.length; i++) {
+        if (users[i].u === u) return alert('Usuário já existe.');
+      }
+      users.push({ u: u, p: p });
+      alert('Cadastrado!');
+      $('c_user').value = ''; $('c_pass').value = ''; $('c_pass2').value = '';
+      mostrar('login');
+    };
+
+    $('ir_cad').onclick = function (e) { e.preventDefault(); mostrar('cadastro'); };
+    $('ir_login').onclick = function (e) { e.preventDefault(); mostrar('login'); };
+    $('b_sair').onclick = function () { mostrar('login'); };
+  </script>
+</body>
+</html>
